@@ -1,0 +1,12 @@
+/* Workspace visual: Values = Workspace HTML; Granularity = Workspaces[WorkspaceName]. */
+#htmlContent,.htmlViewerEntry{box-sizing:border-box;width:100%;margin:0;padding:0;}
+.cc-ws-card,.cc-ws-card *{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;color:#000;}
+.cc-ws-card{width:calc(100% - 12px);margin:0 6px 6px;padding:10px 14px;background:#fff;border:1px solid #d4e1eb;border-left:4px solid #2188bd;border-radius:12px;cursor:pointer;box-shadow:0 2px 5px rgba(21,49,72,.04);}
+.cc-ws-card:hover{background:#eef7fc;border-color:#2188bd;box-shadow:0 4px 12px rgba(27,111,157,.14);}
+.cc-ws-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.cc-ws-name{font-size:15px;font-weight:700;line-height:1.15;}
+.cc-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:20px;font-size:10px;line-height:1.1;font-weight:700;white-space:nowrap;color:#000;}
+.cc-badge.good{background:#e0f3e8;border:1px solid #9cc9ab;}.cc-badge.bad{background:#fbe6e5;border:1px solid #e0abaa;}.cc-badge.warn{background:#fff1cf;border:1px solid #dfc681;}.cc-badge.info{background:#e0effa;border:1px solid #99bedb;}.cc-badge.neutral{background:#edf0f4;border:1px solid #c4ccd6;}
+.cc-ws-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px;}
+.cc-ws-metrics div{display:flex;align-items:baseline;gap:5px;}.cc-ws-metrics b{font-size:22px;line-height:1;font-weight:700;}.cc-ws-metrics span{font-size:10px;}
+.cc-ws-bottom{margin-top:8px;font-size:10px;}

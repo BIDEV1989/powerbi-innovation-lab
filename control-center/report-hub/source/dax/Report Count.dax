@@ -1,0 +1,2 @@
+Report Count =
+COALESCE(DISTINCTCOUNT('PBI Control Center Current'[ReportId]), 0)

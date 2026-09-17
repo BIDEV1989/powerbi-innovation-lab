@@ -1,0 +1,13 @@
+Control Center - Workspace HTML =
+VAR _Name = SELECTEDVALUE('Workspaces'[WorkspaceName], "Workspace")
+VAR _SafeName = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(_Name, "&", "&amp;"), "<", "&lt;"), ">", "&gt;")
+VAR _Failed = [Failed Models]
+VAR _NoHistory = [No History Models]
+VAR _Running = [Running Models]
+VAR _BadgeClass = SWITCH(TRUE(), _Failed > 0, "bad", _NoHistory > 0, "warn", _Running > 0, "info", "good")
+VAR _BadgeText = SWITCH(TRUE(), _Failed > 0, FORMAT(_Failed,"0") & " failed", _NoHistory > 0, FORMAT(_NoHistory,"0") & " no history", _Running > 0, FORMAT(_Running,"0") & " running", "No failures")
+RETURN
+"<div class='cc-ws-card'>"
+& "<div class='cc-ws-top'><div class='cc-ws-name'>" & _SafeName & "</div><span class='cc-badge " & _BadgeClass & "'>" & _BadgeText & "</span></div>"
+& "<div class='cc-ws-metrics'><div><b>" & FORMAT([Report Count],"0") & "</b><span>Reports</span></div><div><b>" & FORMAT([Model Count],"0") & "</b><span>Models</span></div><div><b>" & IF(ISBLANK([Workspace Healthy Rate]),"—",FORMAT([Workspace Healthy Rate],"0%")) & "</b><span>Healthy*</span></div></div>"
+& "<div class='cc-ws-bottom'>" & FORMAT([Healthy Models],"0") & " healthy models · " & FORMAT([Not Refreshable Models],"0") & " not refreshable</div></div>"

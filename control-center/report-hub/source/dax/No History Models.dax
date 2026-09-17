@@ -1,0 +1,2 @@
+No History Models =
+COALESCE(CALCULATE(COUNTROWS('Semantic Models'), KEEPFILTERS('Semantic Models'[HealthStatus] = "NO REFRESH HISTORY")), 0)

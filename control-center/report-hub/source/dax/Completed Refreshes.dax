@@ -1,0 +1,2 @@
+Completed Refreshes =
+COALESCE(CALCULATE(COUNTROWS('PBI Refresh History'), KEEPFILTERS('PBI Refresh History'[RefreshStatus] = "Completed")), 0)

@@ -1,0 +1,29 @@
+Control Center - Refresh History HTML =
+VAR _Total = [Refresh Executions]
+VAR _Success = [Completed Refreshes]
+VAR _Failed = [Failed Refreshes]
+VAR _Running = [Running Refreshes]
+VAR _Rate = IF(ISBLANK([Success Rate]),"—",FORMAT([Success Rate],"0.0%"))
+VAR _Avg = IF(ISBLANK([Average Refresh Minutes]),"—",FORMAT([Average Refresh Minutes],"0.0") & " min")
+VAR _Scope = SELECTEDVALUE('Workspaces'[WorkspaceName],"All selected workspaces")
+VAR _ScopeSafe = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(_Scope,"&","&amp;"),"<","&lt;"),">","&gt;")
+VAR _Start = MIN('Calendar'[Date])
+VAR _End = MAX('Calendar'[Date])
+VAR _Failures = TOPN(6,FILTER('PBI Refresh History','PBI Refresh History'[RefreshStatus] = "Failed"),'PBI Refresh History'[StartTimeUTC],DESC,'PBI Refresh History'[RefreshId],DESC)
+VAR _FailureRows = CONCATENATEX(_Failures,
+    VAR _Key = 'PBI Refresh History'[ModelKey]
+    VAR _ModelName = LOOKUPVALUE('Semantic Models'[SemanticModelName],'Semantic Models'[ModelKey],_Key)
+    VAR _SafeModel = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(_ModelName,"&","&amp;"),"<","&lt;"),">","&gt;")
+    RETURN "<div class='cc-failure-row'><div><b>" & _SafeModel & "</b><span>" & FORMAT('PBI Refresh History'[StartTimeUTC],"mmm d, hh:mm") & " UTC · execution " & FORMAT('PBI Refresh History'[RefreshId],"0") & "</span></div><strong>" & FORMAT(DIVIDE('PBI Refresh History'[DurationSeconds],60),"0.0") & " min</strong><span class='cc-badge bad'>FAILED</span></div>","",'PBI Refresh History'[StartTimeUTC],DESC,'PBI Refresh History'[RefreshId],DESC)
+VAR _ModelStats = ADDCOLUMNS(VALUES('Semantic Models'[ModelKey]),"__Avg",CALCULATE([Average Refresh Minutes]),"__Runs",CALCULATE([Completed Refreshes]))
+VAR _Slow = TOPN(5,FILTER(_ModelStats,NOT ISBLANK([__Avg])),[__Avg],DESC,'Semantic Models'[ModelKey],ASC)
+VAR _MaxAvg = MAXX(_Slow,[__Avg])
+VAR _SlowRows = CONCATENATEX(_Slow,
+    VAR _Name = LOOKUPVALUE('Semantic Models'[SemanticModelName],'Semantic Models'[ModelKey],'Semantic Models'[ModelKey])
+    VAR _Safe = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(_Name,"&","&amp;"),"<","&lt;"),">","&gt;")
+    VAR _Width = FORMAT(DIVIDE([__Avg],_MaxAvg,0)*100,"0.0","en-US")
+    RETURN "<div class='cc-slow-row'><div class='cc-slow-top'><b>" & _Safe & "</b><strong>" & FORMAT([__Avg],"0.0") & " min</strong></div><div class='cc-meter'><div style='width:" & _Width & "%'></div></div><span>" & FORMAT([__Runs],"0") & " completed executions</span></div>","",[__Avg],DESC,'Semantic Models'[ModelKey],ASC)
+VAR _SuccessWidth = FORMAT(DIVIDE(_Success,_Total,0)*100,"0.0","en-US")
+VAR _FailWidth = FORMAT(DIVIDE(_Failed,_Total,0)*100,"0.0","en-US")
+VAR _Kpis = "<div class='cc-kpis'><div><span>Total executions</span><b>" & FORMAT(_Total,"#,0") & "</b><small>One row per refresh</small></div><div><span>Completed</span><b>" & FORMAT(_Success,"#,0") & "</b><small>Terminal success</small></div><div class='cc-kpi-alert'><span>Failed</span><b>" & FORMAT(_Failed,"#,0") & "</b><small>Terminal failure</small></div><div><span>Success rate</span><b>" & _Rate & "</b><small>Completed / terminal</small></div><div><span>Average duration</span><b>" & _Avg & "</b><small>Completed refreshes only</small></div><div><span>In progress</span><b>" & FORMAT(_Running,"#,0") & "</b><small>Not counted as failed</small></div></div>"
+RETURN "<div class='cc-history'><div class='cc-history-context'><span>" & _ScopeSafe & "</span><span>" & FORMAT(_Start,"mmm d") & " – " & FORMAT(_End,"mmm d, yyyy") & " · UTC</span></div>" & _Kpis & "<section class='cc-distribution'><h3>Refresh outcomes</h3><div class='cc-outcome'><span>Completed</span><div class='cc-track'><div class='cc-success-fill' style='width:" & _SuccessWidth & "%'></div></div><b>" & FORMAT(_Success,"#,0") & "</b></div><div class='cc-outcome'><span>Failed</span><div class='cc-track'><div class='cc-fail-fill' style='width:" & _FailWidth & "%'></div></div><b>" & FORMAT(_Failed,"#,0") & "</b></div></section><div class='cc-history-bottom'><section class='cc-panel'><h3>Recent failures</h3><p>Latest 6 failed executions in the selected scope</p>" & IF(COUNTROWS(_Failures)=0,"<div class='cc-no-results'>No failures in this selection.</div>",_FailureRows) & "</section><section class='cc-panel'><h3>Slowest semantic models</h3><p>Top 5 by average completed-refresh duration</p>" & IF(COUNTROWS(_Slow)=0,"<div class='cc-no-results'>No completed refreshes in this selection.</div>",_SlowRows) & "</section></div><div class='cc-footnote'>Overlapping snapshots are deduplicated by WorkspaceId + SemanticModelId + RefreshId. The most recent observation is retained.</div></div>"

@@ -1,0 +1,17 @@
+Control Center - Reports HTML =
+VAR _One = HASONEVALUE('Workspaces'[WorkspaceId])
+VAR _Cards = CONCATENATEX(
+    'PBI Control Center Current',
+    VAR _Name = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE('PBI Control Center Current'[ReportName],"&","&amp;"),"<","&lt;"),">","&gt;")
+    VAR _Model = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE('PBI Control Center Current'[SemanticModelName],"&","&amp;"),"<","&lt;"),">","&gt;")
+    VAR _Owner = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE('PBI Control Center Current'[SemanticModelOwner],"&","&amp;"),"<","&lt;"),">","&gt;")
+    VAR _Health = 'PBI Control Center Current'[HealthStatus]
+    VAR _Class = SWITCH(_Health,"HEALTHY","good","REFRESH FAILED","bad","NO REFRESH HISTORY","warn","IN PROGRESS","info","neutral")
+    VAR _Last = IF(ISBLANK('PBI Control Center Current'[LastRefreshUTC]),"No refresh history",FORMAT('PBI Control Center Current'[LastRefreshUTC],"mmm d, yyyy hh:mm") & " UTC")
+    VAR _Minutes = IF(ISBLANK('PBI Control Center Current'[LastRefreshDurationSeconds]),"—",FORMAT(DIVIDE('PBI Control Center Current'[LastRefreshDurationSeconds],60),"0.0") & " min")
+    VAR _URL = COALESCE('PBI Control Center Current'[ReportURL],"")
+    VAR _SafeURL = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(_URL,"&","&amp;"),"'","&#39;"),"<","&lt;"),">","&gt;")
+    VAR _Launch = IF(LEFT(_URL,LEN("https://app.powerbi.com/")) = "https://app.powerbi.com/", "<a class='cc-open' href='" & _SafeURL & "'>Open report ↗</a>", "<span class='cc-open cc-disabled'>Demo report · no live link</span>")
+    RETURN "<div class='cc-report-card'><div class='cc-report-top'><span class='cc-report-icon'>▦</span><span class='cc-badge " & _Class & "'>" & _Health & "</span></div><h3>" & _Name & "</h3><p class='cc-model'>" & _Model & "</p><div class='cc-detail'><span>Model owner</span><b>" & _Owner & "</b></div><div class='cc-detail'><span>Last refresh</span><b>" & _Last & "</b></div><div class='cc-detail'><span>Duration</span><b>" & _Minutes & "</b></div><div class='cc-report-bottom'>" & _Launch & "</div></div>",
+    "",'PBI Control Center Current'[ReportName],ASC)
+RETURN IF(_One,"<div class='cc-report-grid'>" & _Cards & "</div>","<div class='cc-empty'><span class='cc-empty-icon'>▦</span><h2>Select a workspace to see its reports</h2><p>The workspace cards on the left are individual Power BI data points.<br/>Selecting one filters this report panel without opening another report.</p><div class='cc-empty-note'>Synthetic sample · real metadata model · no tenant connection</div></div>")

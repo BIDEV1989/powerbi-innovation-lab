@@ -1,0 +1,2 @@
+Running Models =
+COALESCE(CALCULATE(COUNTROWS('Semantic Models'), KEEPFILTERS('Semantic Models'[HealthStatus] = "IN PROGRESS")), 0)

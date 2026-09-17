@@ -1,0 +1,2 @@
+Refresh Executions =
+COUNTROWS('PBI Refresh History')

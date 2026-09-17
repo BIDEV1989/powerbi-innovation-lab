@@ -1,0 +1,2 @@
+Average Refresh Minutes =
+DIVIDE(CALCULATE(AVERAGE('PBI Refresh History'[DurationSeconds]), KEEPFILTERS('PBI Refresh History'[RefreshStatus] = "Completed")), 60)

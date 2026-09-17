@@ -1,0 +1,2 @@
+Healthy Models =
+COALESCE(CALCULATE(COUNTROWS('Semantic Models'), KEEPFILTERS('Semantic Models'[HealthStatus] = "HEALTHY")), 0)

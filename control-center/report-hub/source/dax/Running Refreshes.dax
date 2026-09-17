@@ -1,0 +1,2 @@
+Running Refreshes =
+COUNTROWS(FILTER('PBI Refresh History', 'PBI Refresh History'[RefreshStatus] IN {"Unknown", "InProgress"} && ISBLANK('PBI Refresh History'[EndTimeUTC])))

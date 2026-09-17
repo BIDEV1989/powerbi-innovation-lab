@@ -1,0 +1,5 @@
+Control Center - Reports Header HTML =
+VAR _One = HASONEVALUE('Workspaces'[WorkspaceId])
+VAR _Title = IF(_One, SELECTEDVALUE('Workspaces'[WorkspaceName]), "Your report directory")
+VAR _Safe = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(_Title,"&","&amp;"),"<","&lt;"),">","&gt;")
+RETURN "<div class='cc-reports-heading'><div class='cc-eyebrow'>" & IF(_One,"SELECTED WORKSPACE","WORKSPACE & REPORT HUB") & "</div><h2>" & _Safe & "</h2><p>" & FORMAT([Report Count],"0") & " reports · " & FORMAT([Model Count],"0") & " semantic models · " & FORMAT([Failed Models],"0") & " models with latest refresh failed</p></div>"

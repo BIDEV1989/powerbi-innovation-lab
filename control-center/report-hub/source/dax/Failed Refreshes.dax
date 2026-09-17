@@ -1,0 +1,2 @@
+Failed Refreshes =
+COALESCE(CALCULATE(COUNTROWS('PBI Refresh History'), KEEPFILTERS('PBI Refresh History'[RefreshStatus] = "Failed")), 0)

@@ -1,0 +1,2 @@
+Workspace Healthy Rate =
+DIVIDE([Healthy Models], [Refreshable Models])

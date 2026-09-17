@@ -1,0 +1,2 @@
+Refreshable Models =
+COALESCE(CALCULATE(COUNTROWS('Semantic Models'), KEEPFILTERS('Semantic Models'[IsRefreshable] = TRUE())), 0)

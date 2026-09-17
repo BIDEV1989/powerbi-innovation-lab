@@ -1,0 +1,2 @@
+Latest Capture UTC =
+MAX('Demo Info'[AsOfUTC])
